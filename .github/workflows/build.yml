@@ -1,0 +1,36 @@
+name: Build
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: { }
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v2.5.0
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build
+        id: build
+        run: mvn -B -U -DskipTests clean install
+
+      - name: Publish image
+        run: |
+          docker login ghcr.io -u remcowesterhoud -p ${{ secrets.GITHUB_TOKEN }}
+          docker build -t techtalk
+          docker push ghcr.io/remcowesterhoud/techtalk:latest
