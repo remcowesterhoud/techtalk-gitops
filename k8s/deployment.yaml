@@ -15,8 +15,8 @@ spec:
         app: techtalk
     spec:
       containers:
-        - name: test
-          image: remcow/test
+        - name: techtalk-gitops
+          image: ghcr.io/remcowesterhoud/techtalk-gitops:master
           ports:
             - containerPort: 80
           env:
