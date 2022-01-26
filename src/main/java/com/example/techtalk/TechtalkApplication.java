@@ -24,4 +24,12 @@ public class TechtalkApplication {
 				.send()
 				.exceptionally( throwable -> { throw new RuntimeException("I broke"); });
 	}
+
+	@ZeebeWorker(type = "task2")
+	public void handleTask2(final JobClient jobClient, final ActivatedJob activatedJob) {
+		System.out.println("Completing task ...");
+		jobClient.newCompleteCommand(activatedJob.getKey())
+				.send()
+				.exceptionally( throwable -> { throw new RuntimeException("I broke"); });
+	}
 }
